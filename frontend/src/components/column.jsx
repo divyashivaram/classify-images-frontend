@@ -23,10 +23,10 @@ const Title = styled.h3`
 
 export default class Column extends Component {
   render() {
-    const columnName = this.props.column
+    const column = this.props.column
     return (
       <Container>
-        <Title>{columnName}</Title>
+        <Title>{column.title}</Title>
       </Container>
     );
   }

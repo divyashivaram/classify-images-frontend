@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Alert from '@mui/material/Alert';
+import ClassifyImagesApp from './main-app';
 
 class Viewer extends React.Component {
 
@@ -8,7 +9,7 @@ class Viewer extends React.Component {
         super(props);
 
         this.state = {
-           solved: false,
+            solved: false,
         };
     }
 
@@ -26,8 +27,9 @@ class Viewer extends React.Component {
         let content =
             <div>
                 {alertContent}
-                <div style={{textAlign: "center"}}>Tenyks Mini-Project Submission </div>
+                <div style={{ textAlign: "center" }}>Tenyks Mini-Project Submission </div>
                 {/*  TODO: add generation of your viewer   */}
+                <ClassifyImagesApp />
             </div>
 
         return content
@@ -36,6 +38,6 @@ class Viewer extends React.Component {
 
 
 ReactDOM.render(
-  <Viewer />,
-  document.getElementById('root')
+    <Viewer />,
+    document.getElementById('root')
 );

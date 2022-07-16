@@ -6,6 +6,10 @@ const Container = styled.div`
   display: flex;
   user-select: none;
   text-align:center;
+  display: flex;
+  align-items: center;
+  min-height: 24em;
+  justify-content: center;
 `;
 
 function filterByGroupLabel(arr, label) {

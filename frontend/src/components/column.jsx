@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styled from '@emotion/styled';
 import { ImageList } from '@mui/material';
 import Image from './image';
+import { Droppable } from 'react-beautiful-dnd';
 
 
 const Container = styled.div`
@@ -32,18 +33,25 @@ export default class Column extends Component {
     return (
       <Container>
         <Title>{column.title}</Title>
-
-      <ImageList sx={{ width: 500, height: 450, alignItems: 'start' }} cols={3} rowHeight={164}>
-              {imgData.map((img) => {
+        <Droppable droppableId={column.id}>
+          {(provided, snapshot) => (
+          <ImageList sx={{ width: 500, height: 450, alignItems: 'start' }} cols={3} rowHeight={164}
+          ref={provided.innerRef}
+              {...provided.droppableProps}
+              >
+              {imgData.map((img, index) => {
                 return (
                   <Image
                     img={img}
+                    index={index}
                     key={img.id}
                   />
                 );
               })}
-            </ImageList>
-
+               {provided.placeholder}
+              </ImageList>
+          )}
+            </Droppable>
 
       </Container>
     );

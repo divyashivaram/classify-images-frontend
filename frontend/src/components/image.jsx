@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from '@emotion/styled';
+import { Draggable } from 'react-beautiful-dnd';
 
 const Container = styled.div`
   background-color:e0e0e0;
@@ -19,12 +20,21 @@ const Logo = styled.img`
     `
 export default class Image extends Component {
   render() {
-    const img = this.props.img;
+    const img = this.props.img
+    const index = this.props.index
     
     return (
-            <Container>
+        <Draggable draggableId={img.id} index={index}>
+        {(provided, snapshot) => {
+            return (
+            <Container ref={provided.innerRef}
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}>
               <Logo src={`${'http://192.168.0.130:6789/api/images/' + img.id}?w=164&h=164&fit=crop&auto=format`} />
             </Container>
+            )
+        }}
+        </Draggable>
     )
   }
 }

@@ -1,6 +1,7 @@
 import Column from './components/column';
 import React, { Component } from 'react';
 import styled from '@emotion/styled';
+import { DragDropContext } from 'react-beautiful-dnd';
 
 const Container = styled.div`
   display: flex;
@@ -71,17 +72,19 @@ export default class ClassifyImagesApp extends Component {
 
     render() {
         return (
-            <Container>
+            <DragDropContext>
+                <Container>
 
-                {this.state.entities.groupNames.map((groupName) => (
-                    <Column
-                        column={this.state.entities.groupData[groupName]}
-                        imgData={getImages(this.state.entities, groupName)}
-                        key={groupName}
-                    />
-                ))}
+                    {this.state.entities.groupNames.map((groupName) => (
+                        <Column
+                            column={this.state.entities.groupData[groupName]}
+                            imgData={getImages(this.state.entities, groupName)}
+                            key={groupName}
+                        />
+                    ))}
 
-            </Container>
+                </Container>
+            </DragDropContext>
         );
     }
 }

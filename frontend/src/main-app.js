@@ -18,6 +18,11 @@ function filterByGroupLabel(arr, label) {
     return imgIds
 }
 
+const getImages = (entities, columnId) =>
+    entities.groupData[columnId].imgIds.map(
+        (imgId) => entities.imgData[imgId],
+    );
+
 export default class ClassifyImagesApp extends Component {
     // entities: { columnOrder: [], columns: {}, tasks: {} }
     state = {
@@ -67,12 +72,11 @@ export default class ClassifyImagesApp extends Component {
                 {this.state.entities.groupNames.map((groupName) => (
                     <Column
                         column={this.state.entities.groupData[groupName]}
+                        imgData={getImages(this.state.entities, groupName)}
                         key={groupName}
                     />
                 ))}
 
-                {/* <Column column='Human' />
-                <Column column='Terminator' /> */}
             </Container>
         );
     }

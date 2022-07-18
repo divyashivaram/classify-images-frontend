@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { ImageList } from '@mui/material';
 import Image from './image';
 import { Droppable } from 'react-beautiful-dnd';
+import memoizeOne from 'memoize-one';
 
 
 const Container = styled.div`
@@ -24,11 +25,22 @@ const Title = styled.h3`
   text-align: center;
 `;
 
+// Caching results
+const getSelectedMap = memoizeOne((selectedImgIds) =>
+  selectedImgIds.reduce((previous, current) => {
+    previous[current] = true;
+    return previous;
+  }, {}),
+);
+
 export default class Column extends Component {
   render() {
     const column = this.props.column
     const imgData = this.props.imgData
+    const selectedImgIds = this.props.selectedImgIds;
+
     console.log('imgdata', imgData)
+    console.log('selectedImgIds', selectedImgIds)
 
     return (
       <Container>
@@ -40,11 +52,15 @@ export default class Column extends Component {
               {...provided.droppableProps}
               >
               {imgData.map((img, index) => {
+                const isSelected = Boolean(
+                  getSelectedMap(selectedImgIds)[img.id],
+                );
                 return (
                   <Image
                     img={img}
                     index={index}
                     key={img.id}
+                    isSelected={isSelected}
                   />
                 );
               })}

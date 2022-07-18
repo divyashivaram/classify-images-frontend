@@ -26,12 +26,14 @@ function filterByGroupLabel(arr, label) {
 const getImages = (entities, columnId) =>
     entities.groupData[columnId].imgIds.map(
         (imgId) => entities.imgData[imgId],
-    );
+    )
 
 export default class ClassifyImagesApp extends Component {
     // entities: { columnOrder: [], columns: {}, tasks: {} }
     state = {
         entities: { groupNames: [], groupData: {}, imgData: {} },
+        selectedImgIds: [],
+        draggingImgId: null
     }
 
     componentDidMount() {
@@ -70,16 +72,62 @@ export default class ClassifyImagesApp extends Component {
 
     }
 
+    onDragStart = (start) => {
+        console.log('start', start)
+        const id = start.draggableId;
+        // const selected = this.state.selectedTaskIds.find(
+        //     (taskId) => taskId === id,
+        // );
+
+        // // if dragging an item that is not selected - unselect all items
+        // if (!selected) {
+        //     this.unselectAll();
+        // }
+        this.setState({
+            draggingImgId: start.draggableId,
+            selectedImgIds: [start.draggableId]
+        })
+    }
+
+    onDragEnd = (result) => {
+        console.log('result', result)
+        const destination = result.destination;
+        const source = result.source;
+
+        // // nothing to do
+        // if (!destination || result.reason === 'CANCEL') {
+        //     this.setState({
+        //         draggingTaskId: null,
+        //     });
+        //     return;
+        // }
+
+        const processed = mutliDragAwareReorder({
+            entities: this.state.entities,
+            selectedImgIds: this.state.selectedImgIds,
+            source,
+            destination,
+        })
+
+        this.setState({
+            ...processed,
+            draggingImgId: null,
+        });
+    }
+
     render() {
+        const selected = this.state.selectedImgIds;
+
         return (
-            <DragDropContext>
+            <DragDropContext onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
                 <Container>
 
-                    {this.state.entities.groupNames.map((groupName) => (
+                    {this.state.entities.groupNames.map((groupName, index) => (
                         <Column
                             column={this.state.entities.groupData[groupName]}
                             imgData={getImages(this.state.entities, groupName)}
                             key={groupName}
+                            selectedImgIds={selected}
                         />
                     ))}
 

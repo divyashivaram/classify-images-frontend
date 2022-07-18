@@ -22,6 +22,7 @@ export default class Image extends Component {
   render() {
     const img = this.props.img
     const index = this.props.index
+    const isSelected = this.props.isSelected;
     
     return (
         <Draggable draggableId={img.id} index={index}>
@@ -29,7 +30,9 @@ export default class Image extends Component {
             return (
             <Container ref={provided.innerRef}
               {...provided.draggableProps}
-              {...provided.dragHandleProps}>
+              {...provided.dragHandleProps}
+              isSelected={isSelected}
+              >
               <Logo src={`${'http://192.168.0.130:6789/api/images/' + img.id}?w=164&h=164&fit=crop&auto=format`} />
             </Container>
             )

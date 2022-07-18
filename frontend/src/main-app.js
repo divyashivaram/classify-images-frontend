@@ -24,9 +24,64 @@ function filterByGroupLabel(arr, label) {
 }
 
 const getImages = (entities, columnId) =>
+
     entities.groupData[columnId].imgIds.map(
         (imgId) => entities.imgData[imgId],
     )
+
+
+const withNewImgIds = (column, imgIds) => ({
+    id: column.id,
+    title: column.title,
+    imgIds,
+});
+
+const reorderSingleDrag = ({
+    entities,
+    selectedImgIds,
+    source,
+    destination,
+}) => {
+    // moving in the same list
+    if (source.droppableId === destination.droppableId) {
+        return {
+            entities: entities,
+            selectedImgIds,
+        }
+    }
+
+    // moving to a new list
+    const home = entities.groupData[source.droppableId];
+    const foreign = entities.groupData[destination.droppableId];
+
+    // the id of the task to be moved
+    const imgId = home.imgIds[source.index];
+    entities.imgData[imgId].group = destination.droppableId
+
+    // remove from home column
+    const newHomeImgIds = [...home.imgIds];
+    newHomeImgIds.splice(source.index, 1);
+    // add to foreign column
+    const newForeignImgIds = [...foreign.imgIds];
+    newForeignImgIds.splice(destination.index, 0, imgId);
+
+    const updated = {
+        ...entities,
+        groupData: {
+            ...entities.groupData,
+            [home.id]: withNewImgIds(home, newHomeImgIds),
+            [foreign.id]: withNewImgIds(foreign, newForeignImgIds),
+        },
+    };
+    console.log('updated entities-----CORRECT', updated)
+
+    return {
+        entities: updated,
+        selectedImgIds,
+    };
+};
+
+
 
 export default class ClassifyImagesApp extends Component {
     // entities: { columnOrder: [], columns: {}, tasks: {} }
@@ -75,14 +130,6 @@ export default class ClassifyImagesApp extends Component {
     onDragStart = (start) => {
         console.log('start', start)
         const id = start.draggableId;
-        // const selected = this.state.selectedTaskIds.find(
-        //     (taskId) => taskId === id,
-        // );
-
-        // // if dragging an item that is not selected - unselect all items
-        // if (!selected) {
-        //     this.unselectAll();
-        // }
         this.setState({
             draggingImgId: start.draggableId,
             selectedImgIds: [start.draggableId]
@@ -94,15 +141,7 @@ export default class ClassifyImagesApp extends Component {
         const destination = result.destination;
         const source = result.source;
 
-        // // nothing to do
-        // if (!destination || result.reason === 'CANCEL') {
-        //     this.setState({
-        //         draggingTaskId: null,
-        //     });
-        //     return;
-        // }
-
-        const processed = mutliDragAwareReorder({
+        const processed = reorderSingleDrag({
             entities: this.state.entities,
             selectedImgIds: this.state.selectedImgIds,
             source,

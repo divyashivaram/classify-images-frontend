@@ -3,8 +3,7 @@ import styled from '@emotion/styled';
 import { Draggable } from 'react-beautiful-dnd';
 
 const Container = styled.div`
-  background-color:e0e0e0;
-  color:#8aacc8;
+  background-color: ${(props) => getColor(props)};
   padding: 4px;
   margin-bottom: 4px;
   border-radius: 2px;
@@ -19,6 +18,13 @@ const Logo = styled.img`
     height: 100px;
     margin: 5px;
     `
+
+    const getColor = ({ isSelected}) => {
+        if (isSelected) {
+            return '#BE7B41';
+        }
+        return '#8aacc8';
+};
 
 const primaryButton = 0;
 const keyCodes = {

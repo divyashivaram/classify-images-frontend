@@ -11,7 +11,7 @@ const Container = styled.div`
   margin: auto;
   border-radius: 2px;
   border: 1px solid #8aacc8;
-  background-color:e0e0e0;
+  background-color: #78826A;
   
   /* we want the column to take up its full height */
   display: flex;

@@ -130,6 +130,7 @@ const reorderMultiDrag = ({
         const result = destination.index - destinationIndexOffset;
         return result;
     })();
+
     console.log('selectedImgIds', selectedImgIds)
     selectedImgIds.forEach(imgId => {
         console.log('entities.groupData[imgId]', entities.imgData)
@@ -179,6 +180,8 @@ const reorderMultiDrag = ({
     );
 
     const final = withRemovedImgs[destination.droppableId];
+
+    // TODO: ....unnecessary?
     const withInserted = (() => {
         const base = [...final.imgIds];
         base.splice(insertAtIndex, 0, ...orderedSelectedImgIds);

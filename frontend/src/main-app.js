@@ -24,7 +24,6 @@ function filterByGroupLabel(arr, label) {
 }
 
 const getImages = (entities, columnId) =>
-
     entities.groupData[columnId].imgIds.map(
         (imgId) => entities.imgData[imgId],
     )
@@ -42,16 +41,14 @@ const reorderSingleDrag = ({
     source,
     destination,
 }) => {
-    console.log('reorderSingleDrag', entities,
-        selectedImgIds,
-        source,
-        destination)
-    // moving in the same list
+
+    // Handle ghosting the images half way during drag
+    if (!destination) {
+        return;
+    }
+    // moving in the same list. Assumption: Not in scope 
     if (source.droppableId === destination.droppableId) {
-        return {
-            entities: entities,
-            selectedImgIds,
-        }
+        return;
     }
 
     // moving to a new list
@@ -91,10 +88,15 @@ const reorderMultiDrag = ({
     source,
     destination,
 }) => {
-    console.log('reorderMultiDrag', entities,
-        selectedImgIds,
-        source,
-        destination)
+    // Handle ghosting the images half way during drag
+    if (!destination) {
+        return;
+    }
+    // moving in the same list. Assumption: Not in scope 
+    if (source.droppableId === destination.droppableId) {
+        return;
+    }
+
     const start = entities.groupData[source.droppableId];
     const dragged = start.imgIds[source.index];
 

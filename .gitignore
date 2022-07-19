@@ -2,3 +2,4 @@ sample_vid.gif
 .DS_Store
 env/
 frontend/node_modules
+backend/__pycache__/

@@ -46,31 +46,35 @@ def say_hello_world():
 @app.route('/api/load_img_data', methods=['GET'])
 def load_img_data():
     try:
-        # Retrieve all metadata filenames
-        meta_files = os.listdir(META_IMGS_PATH)
+        if redis.peek('IMAGE_DATA'):
+            img_data = redis.read('IMAGE_DATA')
+            response = flask.jsonify(
+                json.loads(img_data.decode('utf-8')))
 
-        # Load the metadata information into a dictionary of (image_id) --> (image metadata)
-        data = {}
-        for meta_file in meta_files:
-            if meta_file.endswith(".json"):
-                meta_fpath = os.path.join(META_IMGS_PATH, meta_file)
-                with open(meta_fpath, 'r') as meta_file:
-                    meta_data = json.load(meta_file)
-                    data[meta_data["id"]] = meta_data
+        else:
+            # Retrieve all metadata filenames
+            meta_files = os.listdir(META_IMGS_PATH)
 
-        # Retrieve all the group names in the data
-        group_names = list(set([metadata['group']
-                           for metadata in data.values()]))
-        # In this example, we expect exactly two group names: terminator and human
-        assert set(group_names) == {'terminator', 'human'}
+            # Load the metadata information into a dictionary of (image_id) --> (image metadata)
+            data = {}
+            for meta_file in meta_files:
+                if meta_file.endswith(".json"):
+                    meta_fpath = os.path.join(META_IMGS_PATH, meta_file)
+                    with open(meta_fpath, 'r') as meta_file:
+                        meta_data = json.load(meta_file)
+                        data[meta_data["id"]] = meta_data
 
-        # Send the data, together with the group names
-        print("Sending data: ", data)
-        response_data = {'imgData': data, 'groupNames': group_names}
-        response = flask.jsonify(response_data)
+            # Retrieve all the group names in the data
+            group_names = list(set([metadata['group']
+                                    for metadata in data.values()]))
+            # In this example, we expect exactly two group names: terminator and human
+            assert set(group_names) == {'terminator', 'human'}
 
+            # Send the data, together with the group names
+            response_data = {'imgData': data, 'groupNames': group_names}
+            response = flask.jsonify(response_data)
+            redis.write('IMAGE_DATA', json.dumps(response_data))
     except Exception as e:
-        print(f"Failed with message: {str(e)}")
         response = flask.make_response(
             "Dataset screen display unsuccessful...", 403)
 

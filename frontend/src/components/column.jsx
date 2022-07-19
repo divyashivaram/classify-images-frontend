@@ -61,6 +61,9 @@ export default class Column extends Component {
                     index={index}
                     key={img.id}
                     isSelected={isSelected}
+                    toggleSelection={this.props.toggleSelection}
+                    toggleSelectionInGroup={this.props.toggleSelectionInGroup}
+                    multiSelectTo={this.props.multiSelectTo}
                   />
                 );
               })}

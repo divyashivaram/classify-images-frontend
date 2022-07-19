@@ -4,7 +4,9 @@ import sys
 from flask import Flask, request, send_file
 from flask_cors import CORS
 import json
+from redis_connection import Redis
 
+redis = Redis()
 
 # Relative path setup
 cur_path = os.path.abspath(".")
@@ -26,8 +28,10 @@ CORS(app, supports_credentials=True)
 def add_response_headers(response):
     response.headers.add('Access-Control-Allow-Origin', FRONTEND_URL)
     response.headers.add('Access-Control-Allow-Credentials', 'true')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,Cache-Control')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    response.headers.add('Access-Control-Allow-Headers',
+                         'Content-Type,Authorization,Cache-Control')
+    response.headers.add('Access-Control-Allow-Methods',
+                         'GET,PUT,POST,DELETE,OPTIONS')
     return response
 
 
@@ -55,18 +59,20 @@ def load_img_data():
                     data[meta_data["id"]] = meta_data
 
         # Retrieve all the group names in the data
-        group_names = list(set([metadata['group'] for metadata in data.values()]))
+        group_names = list(set([metadata['group']
+                           for metadata in data.values()]))
         # In this example, we expect exactly two group names: terminator and human
         assert set(group_names) == {'terminator', 'human'}
 
         # Send the data, together with the group names
         print("Sending data: ", data)
-        response_data = {'imgData':data, 'groupNames':group_names}
+        response_data = {'imgData': data, 'groupNames': group_names}
         response = flask.jsonify(response_data)
 
     except Exception as e:
         print(f"Failed with message: {str(e)}")
-        response = flask.make_response("Dataset screen display unsuccessful...", 403)
+        response = flask.make_response(
+            "Dataset screen display unsuccessful...", 403)
 
     response = add_response_headers(response)
 
@@ -102,8 +108,10 @@ def check_grouping():
         img_ids = imgsMetadata.keys()
 
         # Define the expected image groupings
-        correct_h = {'11', '12', '13', '14', '15', '16', '111', '112', '113', '114', '115', '116'}
-        correct_t = {'0', '1', '2', '3', '4', '5', '100', '101', '102', '103', '104', '105'}
+        correct_h = {'11', '12', '13', '14', '15', '16',
+                     '111', '112', '113', '114', '115', '116'}
+        correct_t = {'0', '1', '2', '3', '4', '5',
+                     '100', '101', '102', '103', '104', '105'}
 
         # Retrieve the sent groupings
         sent_h = set()
@@ -117,10 +125,11 @@ def check_grouping():
         # Check if they are equal
         success = ((sent_h == correct_h) and (correct_t == sent_t))
 
-        response = flask.jsonify({"success" : success})
+        response = flask.jsonify({"success": success})
     except Exception as e:
         print(f"Failed with message: {str(e)}")
-        response = flask.make_response("Dataset screen display unsuccessful...", 403)
+        response = flask.make_response(
+            "Dataset screen display unsuccessful...", 403)
 
     response = add_response_headers(response)
 

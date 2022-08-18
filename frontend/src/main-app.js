@@ -76,6 +76,10 @@ const reorderSingleDrag = ({
     };
     console.log('updated entities-----CORRECT', updated)
     // api call
+
+    const d = modifyImageData({ imgData: updated.imgData, groupNames: Object.keys(updated.groupData) }).then(data => {
+        return 'True'
+    })
     return {
         entities: updated,
         selectedImgIds,
@@ -200,7 +204,9 @@ const reorderMultiDrag = ({
     };
     console.log('multi drag----CORRECT', updated)
     // Make api call
-
+    const d = modifyImageData({ imgData: updated.imgData, groupNames: Object.keys(updated.groupData) }).then(data => {
+        return 'True'
+    })
 
     return {
         entities: updated,
@@ -280,6 +286,20 @@ export const mutliDragAwareReorder = (args) => {
     }
     return reorderSingleDrag(args);
 };
+
+async function modifyImageData(body) {
+    console.log('get image data', body)
+    let response = await fetch('http://192.168.0.130:6789/api/modify_img_data',
+        {
+            method: 'POST',
+            body: JSON.stringify(body),
+            headers: {
+                'content-type': 'application/json;charset=UTF-8',
+            },
+        })
+    let data = await response.json()
+    return data
+}
 
 export default class ClassifyImagesApp extends Component {
     // entities: { columnOrder: [], columns: {}, tasks: {} }
